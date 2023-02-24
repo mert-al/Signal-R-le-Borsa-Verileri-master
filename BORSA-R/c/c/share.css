@@ -1,0 +1,8 @@
+.share {}
+    .share-item{ display:flex; align-items: center; height:44px; border-bottom: 1px solid rgba(6, 40, 73, 0.1);}
+    .share-item span { flex:1 1 0; font-size:12px; color: var(--color-primary); text-align: center;}
+    .share-item span strong { font-family:var(--font-bold); }
+    .share-item.up span:last-child { color: var(--color-green);}
+    .share-item.down span:last-child { color: var(--color-red);}
+    .share-info { height:47px; display:flex; align-items: center; justify-content: flex-end; padding:0 20px;}
+    .share-info span {font-size:11px; color: var(--color-primary); opacity: .6;}

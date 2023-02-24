@@ -1,0 +1,11 @@
+.stock-select-widget { display:flex; flex-wrap:wrap; gap:16px;}
+.stock-select-widget .fifty-percent { width:calc(50% - 8px); }
+.stock-select-widget .form-button { width:100%; }
+
+@media (min-width:992px) {
+    .stock-select-widget { flex-wrap:nowrap;}
+    .stock-select-widget .form-button { width:auto; }
+
+    .stock-select-widget.type-02 {flex-wrap:wrap;}
+    .stock-select-widget.type-02 .form-button { width:100%; }
+}

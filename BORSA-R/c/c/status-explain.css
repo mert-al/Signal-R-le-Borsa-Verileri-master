@@ -1,0 +1,8 @@
+.status-explain { padding:2px; background: rgba(6, 40, 73, 0.1); border-radius: 8px; }
+.status-explain-title { height:43px; display:flex; align-items: center; padding:0 18px; font-size:16px; font-family: var(--font-bold); color: var(--color-primary);}
+.status-explain-content { padding:16px; background-color:var(--color-white); border-radius: 6px;}
+.status-explain-content span { display:block; margin-bottom:12px; font-size:14px;}
+.status-explain-content i { font-size:12px;}
+.status-explain-content i strong { font-family:var(--font-bold);}
+
+

@@ -1,0 +1,248 @@
+﻿
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Scripts/jquery.signalR-2.4.3.min.js"></script>
+<script src="~/signalr/hubs"></script>
+
+<style>
+
+    table, tr, td, th {
+        border: 1px solid #000;
+        text-align: center;
+    }
+
+    td {
+        padding: 2px;
+    }
+
+    th {
+        padding: 5px;
+    }
+
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 5px;
+    }
+
+    .red {
+        background-color: #ff7d80;
+    }
+
+    .green {
+        background-color: #acf792;
+    }
+
+    .white {
+        background-color: white;
+    }
+</style>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sabah Finans</title>
+
+    <link rel="stylesheet" href="~/c/c/main.css">
+    <link rel="stylesheet" href="~/c/c/header.css">
+    <link rel="stylesheet" href="~/c/c/bootstrap-grid.css">
+    <link href="~/c/c/datatable.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/c/c/breadcrumb.css">
+
+
+
+
+
+</head>
+<body>
+
+    @*DataContainer1*@
+    <div class="row mb-4" style="width:80%">
+        <div class="col-4">
+            <div class="module-title-area mb-2">
+                <span class="module-title-large">BIST Endeksleri</span>
+            </div>
+            <div class="datatable-container none-datatable">
+                <table class="datatable display responsive lazyload">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>SON</th>
+                            <th>%</th>
+                            <th>ZAMAN</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataContainer1">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        @*DataContainer2*@
+        <div class="col-4">
+            <div class="module-title-area mb-2">
+                <span class="module-title-large"></span>
+            </div>
+            <div class="datatable-container none-datatable">
+                <table class="datatable display responsive lazyload">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>SON</th>
+                            <th>%</th>
+                            <th>ZAMAN</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataContainer2">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        @*DataContainer3*@
+        <div class="col-4">
+            <div class="module-title-area mb-2">
+                <span class="module-title-large"></span>
+
+            </div>
+            <div class="datatable-container none-datatable">
+                <table class="datatable display responsive lazyload">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>SON</th>
+                            <th>%</th>
+                            <th>ZAMAN</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataContainer3">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <link rel="stylesheet" href="~/c/c/swiper-bundle.css">
+    <link rel="stylesheet" href="~/c/c/chart.css">
+    <script src="~/c/j/ls.unveilhooks.min.js"></script>
+    <script src="~/c/j/lazysizes.min.js"></script>
+    <script src="~/c/j/main.js"></script>
+    <script src="~/c/j/swiper-bundle.min.js"></script>
+    <script src="~/c/j/datatables.min.js"></script>
+    <script src="~/c/j/dataTables.responsive.min.js"></script>
+    <script src="~/c/j/chart.min.js"></script>
+</body>
+
+
+
+<script>
+    //signalR hub bağlantı 
+    var connection = $.hubConnection();
+    var borsaHubProxy = connection.createHubProxy('borsaHub');
+    var eskiVeriler = [];
+
+    borsaHubProxy.on('updateBorsaVerileri', function (borsaVerileri) {
+        var dataContainer = $("#dataContainer1");
+        var yeniVeriler = [];
+
+        //BackGround Değişimi için gereken fonksiyon
+        function setBackground(row, şuankiFiyat, öncekiFiyat) {
+            if (şuankiFiyat > öncekiFiyat) {
+                row.classList.add('green');
+            } else if (şuankiFiyat < öncekiFiyat) {
+                row.classList.add('red');
+            }
+            setTimeout(function () {
+                if (row.classList.contains('green',"red")) {
+                    row.classList.remove('green');
+                }
+                if (row.classList.contains('red',"green")) {
+                    row.classList.remove('red');                   
+                }
+            }, 3000);
+        }
+        //Borsa verilerinin ilk çekilip table oluşturulduğu kodlar 
+        var VeriSayısı = Math.ceil(borsaVerileri.length / 3);
+        for (var i = 1; i < borsaVerileri.length - 1; i++) {
+
+            if (i >= VeriSayısı && i < (VeriSayısı * 2 - 1))
+                dataContainer = $("#dataContainer2");
+            else if (i >= (VeriSayısı * 2 - 1))
+                dataContainer = $("#dataContainer3");
+
+            var datarr = borsaVerileri[i].split("|");
+            yeniVeriler.push(datarr);
+
+            var eskiVeriIndex = eskiVeriler.findIndex(function (item) {
+                return item[0] === datarr[0];
+            });
+            if (eskiVeriIndex === -1) {
+                var TRElement = $("<tr id='id_" + datarr[0] + "'>");
+                for (var j = 0; j < 4; j++) {
+                    if (datarr[j] !== "") {
+                        var TDElement = $("<td></td>");
+                        if (j === 2) {
+                            var spanClass;
+                            var ŞuankiFiyat = parseFloat(datarr[j]);
+                            if (ŞuankiFiyat >= 0) {
+                                spanClass = "datatable-rate up";
+                            } else if (ŞuankiFiyat < 0) {
+                                spanClass = "datatable-rate down";
+                            } else {
+                                spanClass = "datatable-rate";
+                            }
+                            var spanElement = $("<span></span>").text(datarr[j]).attr("class", spanClass);
+                            TDElement.append(spanElement);
+                        } else {
+                            var PElement = $("<p></p>").text(datarr[j]);
+                            TDElement.append(PElement);
+                        }
+                        TRElement.append(TDElement);
+                        dataContainer.append(TRElement);
+                    }
+                }
+                dataContainer.append("</tr>");
+            } else if (!eskiVeriler[eskiVeriIndex].every(function (item, index) {
+                return item === datarr[index];
+            })) {
+                //Data güncelleme alanı
+                var row = document.getElementById("id_" + datarr[0]);
+                row.innerHTML = "";
+                for (var j = 0; j < 4; j++) {
+                    if (datarr[j] !== "") {
+                        var tdTag = document.createElement("td");
+                        if (j === 2) {
+                            var spanClass;
+                            var ÖncekiFiyat = parseFloat(eskiVeriler[eskiVeriIndex][j]);
+                            var ŞuankiFiyat = parseFloat(datarr[j]);
+                            if (ŞuankiFiyat > 0) {
+                                spanClass = "datatable-rate up";
+                            } else if (ŞuankiFiyat < 0) {
+                                spanClass = "datatable-rate down";
+                            } else {
+                                spanClass = "datatable-rate";
+                            }
+                            var spanElement = document.createElement("span");
+                            spanElement.appendChild(document.createTextNode(datarr[j]));
+                            spanElement.setAttribute("class", spanClass);
+                            tdTag.appendChild(spanElement);
+                        } else {
+                            var ptag = document.createElement("p");
+                            ptag.appendChild(document.createTextNode(datarr[j]));
+                            tdTag.appendChild(ptag);
+                        }
+                        row.appendChild(tdTag);
+                        if (j === 1) {
+                            var öncekiFiyat = parseFloat(eskiVeriler[eskiVeriIndex][j]);
+                            var şuankiFiyat = parseFloat(datarr[j]);
+                            setBackground(row, şuankiFiyat, öncekiFiyat);
+                        }
+                    }
+                }
+            }
+        }
+        eskiVeriler = yeniVeriler;
+    });
+    connection.start().then(function () {
+        borsaHubProxy.invoke('getBorsaVerileri');
+    });
+</script>
+

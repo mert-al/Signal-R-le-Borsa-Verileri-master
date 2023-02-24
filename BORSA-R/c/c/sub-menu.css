@@ -1,0 +1,8 @@
+.sub-menu { display:flex; background: rgba(41, 47, 137, 0.1); border-radius: 4px; overflow-x: auto; -webkit-border-radius: 4px; -moz-border-radius: 4px; -ms-border-radius: 4px; -o-border-radius: 4px; }
+.sub-menu a { flex:1 1 auto; display:flex; align-items: center; justify-content: center; height: 48px; padding:0 5px; font-size:12px; font-family:var(--font-bold); color: var(--color-primary); white-space: nowrap;}
+.sub-menu a:hover { background: rgba(41, 47, 137, 0.1); }
+.sub-menu a.active { background: var(--color-blue); color: var(--color-white); }
+
+@media (min-width:1440px) {
+    .sub-menu a { font-size:14px;}
+}
